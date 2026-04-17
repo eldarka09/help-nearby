@@ -2,106 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 40 33% 97%;
-    --foreground: 20 14% 18%;
+    --background: 350 100% 98%;
+    --foreground: 340 30% 22%;
 
     --card: 0 0% 100%;
-    --card-foreground: 20 14% 18%;
+    --card-foreground: 340 30% 22%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 20 14% 18%;
+    --popover-foreground: 340 30% 22%;
 
-    --primary: 0 70% 67%;
+    --primary: 0 70% 70%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 350 90% 88%;
 
-    --secondary: 36 40% 94%;
-    --secondary-foreground: 20 14% 18%;
+    --secondary: 350 60% 96%;
+    --secondary-foreground: 340 30% 22%;
 
-    --muted: 36 30% 92%;
-    --muted-foreground: 25 8% 45%;
+    --muted: 350 40% 95%;
+    --muted-foreground: 340 12% 50%;
 
-    --accent: 36 50% 90%;
-    --accent-foreground: 20 14% 18%;
+    --accent: 150 55% 92%;
+    --accent-foreground: 150 40% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 20% 88%;
-    --input: 30 20% 88%;
-    --ring: 0 70% 67%;
+    --border: 350 40% 92%;
+    --input: 350 40% 92%;
+    --ring: 0 70% 70%;
 
-    --radius: 1rem;
+    --radius: 1.5rem;
 
-    --request: 210 85% 58%;
+    --request: 210 90% 65%;
     --request-foreground: 0 0% 100%;
-    --offer: 145 55% 45%;
+    --offer: 150 55% 55%;
     --offer-foreground: 0 0% 100%;
 
-    --cat-food: 25 90% 60%;
-    --cat-medicine: 0 75% 62%;
-    --cat-tech: 220 70% 60%;
-    --cat-moral: 280 60% 65%;
-    --cat-volunteer: 145 55% 50%;
-    --cat-consult: 40 90% 55%;
+    --cat-food: 25 95% 65%;
+    --cat-medicine: 0 80% 70%;
+    --cat-tech: 220 75% 68%;
+    --cat-moral: 290 65% 72%;
+    --cat-volunteer: 150 55% 58%;
+    --cat-consult: 40 95% 62%;
+
+    --shadow-soft: 0 14px 40px -14px hsl(0 70% 70% / 0.35);
+    --shadow-mint: 0 14px 40px -14px hsl(150 55% 55% / 0.35);
+    --shadow-sky: 0 14px 40px -14px hsl(210 90% 65% / 0.35);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -112,6 +68,21 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -10%, hsl(var(--primary-glow) / 0.55), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 100% 30%, hsl(150 70% 90% / 0.5), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 0% 50%, hsl(210 90% 92% / 0.55), transparent 60%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-mint { box-shadow: var(--shadow-mint); }
+  .shadow-sky { box-shadow: var(--shadow-sky); }
+
+  .bouncy {
+    @apply transition-transform duration-200 ease-out hover:scale-[1.04] active:scale-95;
   }
 }
