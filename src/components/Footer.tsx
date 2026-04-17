@@ -1,7 +1,8 @@
-import { Heart, Download } from "lucide-react";
+import { Heart, Download, Mail, Shield, Info } from "lucide-react";
 import { usePostsStore } from "@/store/usePostsStore";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   const exportData = () => {
@@ -16,25 +17,77 @@ export function Footer() {
     a.download = `pomosh-ryadom-export-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("JSON экспорт скачан");
+    toast.success("JSON экспорт скачан 💕");
   };
 
+  const links = [
+    { icon: Info, label: "О проекте" },
+    { icon: Shield, label: "Конфиденциальность" },
+    { icon: Mail, label: "Связаться с нами" },
+  ];
+
   return (
-    <footer className="border-t border-border mt-10">
-      <div className="container py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Heart className="h-4 w-4 text-primary" fill="currentColor" />
-          ПомощьРядом — соседская взаимопомощь © {new Date().getFullYear()}
+    <footer className="mt-10 border-t border-border bg-card/60 backdrop-blur-sm">
+      <div className="container py-12 grid gap-10 md:grid-cols-3">
+        <div>
+          <div className="flex items-center gap-2 font-semibold text-lg">
+            <span className="grid h-9 w-9 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-soft">
+              <Heart className="h-5 w-5" fill="currentColor" />
+            </span>
+            ПомощьРядом
+          </div>
+          <p className="mt-3 text-sm text-muted-foreground max-w-xs">
+            Соседская взаимопомощь с теплом в сердце. Помогайте и получайте помощь рядом с вами.
+          </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-full gap-2"
-          onClick={exportData}
-        >
-          <Download className="h-4 w-4" />
-          Dev: экспорт JSON
-        </Button>
+        <div>
+          <h4 className="font-semibold mb-3">Навигация</h4>
+          <ul className="space-y-2">
+            {links.map((l) => (
+              <li key={l.label}>
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toast(`${l.label} — скоро`);
+                  }}
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <l.icon className="h-4 w-4" />
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold mb-3">Разработчикам</h4>
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full gap-2 bouncy w-fit"
+              onClick={exportData}
+            >
+              <Download className="h-4 w-4" />
+              Быстрый экспорт JSON
+            </Button>
+            <Link
+              to="/admin/data"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              → Админ-панель данных
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="border-t border-border">
+        <div className="container py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            Сделано с <Heart className="h-3 w-3 text-primary" fill="currentColor" /> для добрых соседей
+          </span>
+          <span>© {new Date().getFullYear()} ПомощьРядом</span>
+        </div>
       </div>
     </footer>
   );

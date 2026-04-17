@@ -11,37 +11,41 @@ import { Send } from "lucide-react";
 
 interface Props {
   post: Post | null;
+  defaultName?: string;
   onClose: () => void;
 }
 
-export function RespondDialog({ post, onClose }: Props) {
+import { heartBurst } from "@/lib/confetti";
+
+export function RespondDialog({ post, defaultName, onClose }: Props) {
   const addResponse = usePostsStore((s) => s.addResponse);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (post) {
-      setName("");
+      setName(defaultName ?? "");
       setMessage(
         post.type === "request"
           ? `Здравствуйте, ${post.name}! Я могу помочь.`
           : `Здравствуйте, ${post.name}! Мне нужна ваша помощь.`
       );
     }
-  }, [post]);
+  }, [post, defaultName]);
 
   if (!post) return null;
 
-  const submit = () => {
+  const submit = (e: React.MouseEvent) => {
     if (!name.trim() || !message.trim()) return;
     addResponse({ postId: post.id, fromName: name.trim(), message: message.trim() });
-    toast.success(`Отклик отправлен пользователю ${post.name}`);
+    toast.success(`Отклик отправлен ${post.name} 💌`);
+    heartBurst(e.clientX, e.clientY, 18);
     onClose();
   };
 
   return (
     <Dialog open={!!post} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-md rounded-3xl">
+      <DialogContent className="sm:max-w-md rounded-[2rem]">
         <DialogHeader>
           <DialogTitle>Ответ для {post.name}</DialogTitle>
           <DialogDescription>
@@ -49,14 +53,14 @@ export function RespondDialog({ post, onClose }: Props) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-2xl bg-muted/50 p-3 text-sm text-muted-foreground border border-border">
+        <div className="rounded-2xl bg-muted/60 p-3 text-sm text-muted-foreground border border-border">
           {post.description}
         </div>
 
         <div className="space-y-3">
           <div className="space-y-1.5">
             <Label htmlFor="rname">Ваше имя</Label>
-            <Input id="rname" value={name} onChange={(e) => setName(e.target.value)} className="rounded-xl h-11" placeholder="Имя" />
+            <Input id="rname" value={name} onChange={(e) => setName(e.target.value)} className="rounded-2xl h-11" placeholder="Имя" />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="rmsg">Сообщение</Label>
@@ -66,7 +70,7 @@ export function RespondDialog({ post, onClose }: Props) {
 
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={onClose} className="rounded-full">Отмена</Button>
-          <Button onClick={submit} className="rounded-full gap-1">
+          <Button onClick={submit} className="rounded-full gap-1 bouncy shadow-soft">
             <Send className="h-4 w-4" /> Отправить
           </Button>
         </div>

@@ -10,14 +10,17 @@ import { usePostsStore } from "@/store/usePostsStore";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { heartBurst } from "@/lib/confetti";
 
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   type: PostType;
+  defaultName?: string;
+  defaultCity?: string;
 }
 
-export function CreatePostDialog({ open, onOpenChange, type }: Props) {
+export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaultCity }: Props) {
   const addPost = usePostsStore((s) => s.addPost);
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
@@ -29,13 +32,13 @@ export function CreatePostDialog({ open, onOpenChange, type }: Props) {
   useEffect(() => {
     if (open) {
       setStep(0);
-      setName("");
-      setCity("");
+      setName(defaultName ?? "");
+      setCity(defaultCity ?? "");
       setDistrict("");
       setCategory(null);
       setDescription("");
     }
-  }, [open]);
+  }, [open, defaultName, defaultCity]);
 
   const isRequest = type === "request";
   const total = 3;
@@ -45,7 +48,7 @@ export function CreatePostDialog({ open, onOpenChange, type }: Props) {
     (step === 1 && category) ||
     (step === 2 && description.trim().length >= 10);
 
-  const submit = () => {
+  const submit = (e: React.MouseEvent) => {
     if (!category) return;
     addPost({
       type,
@@ -55,7 +58,8 @@ export function CreatePostDialog({ open, onOpenChange, type }: Props) {
       category,
       description: description.trim(),
     });
-    toast.success(isRequest ? "Запрос опубликован" : "Предложение опубликовано");
+    toast.success(isRequest ? "Запрос опубликован 💕" : "Спасибо за помощь! 🌿");
+    heartBurst(e.clientX, e.clientY, 28);
     onOpenChange(false);
   };
 
