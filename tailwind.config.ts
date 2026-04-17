@@ -47,6 +47,22 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        request: {
+          DEFAULT: "hsl(var(--request))",
+          foreground: "hsl(var(--request-foreground))",
+        },
+        offer: {
+          DEFAULT: "hsl(var(--offer))",
+          foreground: "hsl(var(--offer-foreground))",
+        },
+        cat: {
+          food: "hsl(var(--cat-food))",
+          medicine: "hsl(var(--cat-medicine))",
+          tech: "hsl(var(--cat-tech))",
+          moral: "hsl(var(--cat-moral))",
+          volunteer: "hsl(var(--cat-volunteer))",
+          consult: "hsl(var(--cat-consult))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
