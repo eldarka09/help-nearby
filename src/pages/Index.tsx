@@ -8,11 +8,12 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { MyDashboard } from "@/components/MyDashboard";
 import { Footer } from "@/components/Footer";
 import { CreatePostDialog } from "@/components/CreatePostDialog";
-import { RespondDialog } from "@/components/RespondDialog";
 import { AuthDialog } from "@/components/AuthDialog";
 import { FloatingHearts } from "@/components/FloatingHearts";
+import { ChatPanel } from "@/components/ChatPanel";
 import type { CategoryId, Post, PostType } from "@/lib/types";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -20,9 +21,11 @@ const Index = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [createType, setCreateType] = useState<PostType>("request");
   const [activeCategory, setActiveCategory] = useState<CategoryId | null>(null);
-  const [respondTo, setRespondTo] = useState<Post | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);
+  const openOrCreateChat = useChatStore((s) => s.openOrCreateChat);
   const { t } = useTranslation();
 
   const requireAuth = (after: () => void) => {
@@ -42,7 +45,25 @@ const Index = () => {
   };
 
   const handleRespond = (post: Post) => {
-    requireAuth(() => setRespondTo(post));
+    requireAuth(() => {
+      if (!user) return;
+      if (post.ownerId === user.id) {
+        toast(t("common.needAuth"));
+        return;
+      }
+      const chat = openOrCreateChat({
+        postId: post.id,
+        postSnippet: post.description,
+        postType: post.type,
+        authorId: post.ownerId,
+        authorName: post.name,
+        responderId: user.id,
+        responderName: user.name,
+      });
+      setActiveChatId(chat.id);
+      setChatOpen(true);
+      toast.success(t("chat.startedToast", { name: post.name }));
+    });
   };
 
   const navigate = (id: string) => {
@@ -83,13 +104,17 @@ const Index = () => {
         type={createType}
         defaultName={user?.name}
         defaultCity={user?.city}
-      />
-      <RespondDialog
-        post={respondTo}
-        defaultName={user?.name}
-        onClose={() => setRespondTo(null)}
+        ownerId={user?.id}
       />
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      <ChatPanel
+        open={chatOpen}
+        onOpenChange={(o) => {
+          setChatOpen(o);
+          if (!o) setActiveChatId(null);
+        }}
+        initialChatId={activeChatId}
+      />
     </main>
   );
 };
