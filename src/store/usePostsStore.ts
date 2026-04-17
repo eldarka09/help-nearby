@@ -56,7 +56,10 @@ const seed: Post[] = [
 interface State {
   posts: Post[];
   responses: Response[];
-  addPost: (p: Omit<Post, "id" | "createdAt" | "ownerId">) => Post;
+  addPost: (
+    p: Omit<Post, "id" | "createdAt" | "ownerId">,
+    ownerId?: string
+  ) => Post;
   addResponse: (r: Omit<Response, "id" | "createdAt">) => void;
   toggleResolved: (id: string) => void;
   myOwnerId: string;
@@ -66,12 +69,12 @@ export const usePostsStore = create<State>((set) => ({
   posts: seed,
   responses: [],
   myOwnerId: OWNER_ID,
-  addPost: (p) => {
+  addPost: (p, ownerId) => {
     const post: Post = {
       ...p,
       id: crypto.randomUUID(),
       createdAt: Date.now(),
-      ownerId: OWNER_ID,
+      ownerId: ownerId ?? OWNER_ID,
     };
     set((s) => ({ posts: [post, ...s.posts] }));
     return post;

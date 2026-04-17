@@ -19,9 +19,10 @@ interface Props {
   type: PostType;
   defaultName?: string;
   defaultCity?: string;
+  ownerId?: string;
 }
 
-export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaultCity }: Props) {
+export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaultCity, ownerId }: Props) {
   const addPost = usePostsStore((s) => s.addPost);
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
@@ -52,14 +53,17 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
 
   const submit = (e: React.MouseEvent) => {
     if (!category) return;
-    addPost({
-      type,
-      name: name.trim(),
-      city: city.trim(),
-      district: district.trim() || undefined,
-      category,
-      description: description.trim(),
-    });
+    addPost(
+      {
+        type,
+        name: name.trim(),
+        city: city.trim(),
+        district: district.trim() || undefined,
+        category,
+        description: description.trim(),
+      },
+      ownerId
+    );
     toast.success(isRequest ? t("create.successRequest") : t("create.successOffer"));
     heartBurst(e.clientX, e.clientY, 28);
     onOpenChange(false);

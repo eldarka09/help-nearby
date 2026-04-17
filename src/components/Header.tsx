@@ -1,7 +1,8 @@
-import { Heart, Menu, LogIn, X, LogOut, User } from "lucide-react";
+import { Heart, Menu, LogIn, X, LogOut, User, MessageCircleHeart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,8 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ChatPanel } from "./ChatPanel";
+import { cn } from "@/lib/utils";
 
 interface Props {
   onNavigate: (id: string) => void;
@@ -21,8 +24,10 @@ interface Props {
 
 export function Header({ onNavigate, onLoginClick }: Props) {
   const [open, setOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
+  const unread = useChatStore((s) => (user ? s.unreadTotal(user.id) : 0));
   const { t } = useTranslation();
 
   const links = [
@@ -35,6 +40,15 @@ export function Header({ onNavigate, onLoginClick }: Props) {
   const go = (id: string) => {
     setOpen(false);
     onNavigate(id);
+  };
+
+  const openChat = () => {
+    if (!user) {
+      toast(t("common.needAuth"));
+      onLoginClick();
+      return;
+    }
+    setChatOpen(true);
   };
 
   const initials = user?.name
@@ -70,6 +84,22 @@ export function Header({ onNavigate, onLoginClick }: Props) {
           <div className="hidden sm:block">
             <LanguageSwitcher />
           </div>
+
+          <button
+            onClick={openChat}
+            aria-label={t("chat.title")}
+            className={cn(
+              "relative h-10 w-10 rounded-full grid place-items-center bouncy transition-colors",
+              "hover:bg-muted text-foreground"
+            )}
+          >
+            <MessageCircleHeart className="h-5 w-5" />
+            {unread > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-5 min-w-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold grid place-items-center ring-2 ring-background">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
+          </button>
 
           {user ? (
             <DropdownMenu>
@@ -150,6 +180,8 @@ export function Header({ onNavigate, onLoginClick }: Props) {
           </div>
         </div>
       )}
+
+      <ChatPanel open={chatOpen} onOpenChange={setChatOpen} />
     </header>
   );
 }
