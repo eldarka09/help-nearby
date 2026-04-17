@@ -8,6 +8,7 @@ import { Heart, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { heartBurst } from "@/lib/confetti";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open: boolean;
@@ -23,13 +24,14 @@ export function AuthDialog({ open, onOpenChange }: Props) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const signIn = useAuthStore((s) => s.signIn);
+  const { t } = useTranslation();
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;
     if (mode === "signup" && !name.trim()) return;
     const u = signIn(email.trim(), name.trim() || undefined, city.trim() || undefined);
-    toast.success(`Привет, ${u.name}! 🌸`);
+    toast.success(t("auth.helloToast", { name: u.name }));
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     heartBurst(rect.left + rect.width / 2, rect.top + 60, 18);
     onOpenChange(false);
@@ -43,12 +45,10 @@ export function AuthDialog({ open, onOpenChange }: Props) {
             <Heart className="h-7 w-7" fill="currentColor" />
           </div>
           <DialogTitle className="text-2xl">
-            {mode === "login" ? "С возвращением!" : "Создайте аккаунт"}
+            {mode === "login" ? t("auth.welcomeBack") : t("auth.create")}
           </DialogTitle>
           <DialogDescription>
-            {mode === "login"
-              ? "Войдите, чтобы откликаться и публиковать"
-              : "Это займёт меньше минуты ✨"}
+            {mode === "login" ? t("auth.loginSubtitle") : t("auth.signupSubtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -60,12 +60,10 @@ export function AuthDialog({ open, onOpenChange }: Props) {
               onClick={() => setMode(m)}
               className={cn(
                 "flex-1 py-2 text-sm font-medium rounded-full transition-all",
-                mode === m
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground"
+                mode === m ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
               )}
             >
-              {m === "login" ? "Войти" : "Регистрация"}
+              {m === "login" ? t("auth.tabLogin") : t("auth.tabSignup")}
             </button>
           ))}
         </div>
@@ -74,29 +72,29 @@ export function AuthDialog({ open, onOpenChange }: Props) {
           {mode === "signup" && (
             <>
               <div className="space-y-1.5">
-                <Label htmlFor="aname">Имя</Label>
-                <Input id="aname" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ваше имя" className="rounded-2xl h-11" />
+                <Label htmlFor="aname">{t("auth.name")}</Label>
+                <Input id="aname" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("auth.namePh")} className="rounded-2xl h-11" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="acity">Город</Label>
-                <Input id="acity" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Москва" className="rounded-2xl h-11" />
+                <Label htmlFor="acity">{t("auth.city")}</Label>
+                <Input id="acity" value={city} onChange={(e) => setCity(e.target.value)} placeholder={t("auth.cityPh")} className="rounded-2xl h-11" />
               </div>
             </>
           )}
           <div className="space-y-1.5">
-            <Label htmlFor="aemail">Email</Label>
+            <Label htmlFor="aemail">{t("auth.email")}</Label>
             <Input id="aemail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="rounded-2xl h-11" required />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="apass">Пароль</Label>
+            <Label htmlFor="apass">{t("auth.password")}</Label>
             <Input id="apass" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="rounded-2xl h-11" required />
           </div>
           <Button type="submit" className="w-full h-12 rounded-full bouncy gap-2 shadow-soft">
             <Sparkles className="h-4 w-4" />
-            {mode === "login" ? "Войти" : "Создать аккаунт"}
+            {mode === "login" ? t("auth.submitLogin") : t("auth.submitSignup")}
           </Button>
           <p className="text-[11px] text-center text-muted-foreground pt-1">
-            Демо-режим: данные хранятся локально в браузере
+            {t("auth.demoNote")}
           </p>
         </form>
       </DialogContent>

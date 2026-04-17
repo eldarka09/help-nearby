@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
-const items = [
-  { label: "Людям помогли", value: 12480 },
-  { label: "Волонтёров", value: 3200 },
-  { label: "Городов", value: 84 },
+const targets = [
+  { key: "stats.helped", value: 12480 },
+  { key: "stats.volunteers", value: 3200 },
+  { key: "stats.cities", value: 84 },
 ];
 
 function useCount(target: number, run: boolean) {
@@ -40,9 +41,9 @@ function Counter({ target, label }: { target: number; label: string }) {
   }, []);
   const v = useCount(target, run);
   return (
-    <div ref={ref} className="rounded-3xl bg-card border border-border p-8 text-center">
+    <div ref={ref} className="rounded-3xl bg-card border border-border p-8 text-center shadow-soft">
       <div className="text-4xl md:text-5xl font-bold text-primary tabular-nums">
-        {v.toLocaleString("ru-RU")}+
+        {v.toLocaleString()}+
       </div>
       <div className="mt-2 text-muted-foreground">{label}</div>
     </div>
@@ -50,11 +51,12 @@ function Counter({ target, label }: { target: number; label: string }) {
 }
 
 export function Stats() {
+  const { t } = useTranslation();
   return (
     <section className="container py-16">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {items.map((it) => (
-          <Counter key={it.label} target={it.value} label={it.label} />
+        {targets.map((it) => (
+          <Counter key={it.key} target={it.value} label={t(it.key)} />
         ))}
       </div>
     </section>

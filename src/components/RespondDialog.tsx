@@ -8,6 +8,8 @@ import type { Post } from "@/lib/types";
 import { usePostsStore } from "@/store/usePostsStore";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
+import { heartBurst } from "@/lib/confetti";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   post: Post | null;
@@ -15,10 +17,9 @@ interface Props {
   onClose: () => void;
 }
 
-import { heartBurst } from "@/lib/confetti";
-
 export function RespondDialog({ post, defaultName, onClose }: Props) {
   const addResponse = usePostsStore((s) => s.addResponse);
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
 
@@ -27,18 +28,18 @@ export function RespondDialog({ post, defaultName, onClose }: Props) {
       setName(defaultName ?? "");
       setMessage(
         post.type === "request"
-          ? `Здравствуйте, ${post.name}! Я могу помочь.`
-          : `Здравствуйте, ${post.name}! Мне нужна ваша помощь.`
+          ? t("respond.helloRequest", { name: post.name })
+          : t("respond.helloOffer", { name: post.name })
       );
     }
-  }, [post, defaultName]);
+  }, [post, defaultName, t]);
 
   if (!post) return null;
 
   const submit = (e: React.MouseEvent) => {
     if (!name.trim() || !message.trim()) return;
     addResponse({ postId: post.id, fromName: name.trim(), message: message.trim() });
-    toast.success(`Отклик отправлен ${post.name} 💌`);
+    toast.success(t("respond.sentToast", { name: post.name }));
     heartBurst(e.clientX, e.clientY, 18);
     onClose();
   };
@@ -47,9 +48,9 @@ export function RespondDialog({ post, defaultName, onClose }: Props) {
     <Dialog open={!!post} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-md rounded-[2rem]">
         <DialogHeader>
-          <DialogTitle>Ответ для {post.name}</DialogTitle>
+          <DialogTitle>{t("respond.title", { name: post.name })}</DialogTitle>
           <DialogDescription>
-            {post.city}{post.district ? `, ${post.district}` : ""} · напишите короткое сообщение
+            {post.city}{post.district ? `, ${post.district}` : ""} · {t("respond.subtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -59,19 +60,19 @@ export function RespondDialog({ post, defaultName, onClose }: Props) {
 
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="rname">Ваше имя</Label>
-            <Input id="rname" value={name} onChange={(e) => setName(e.target.value)} className="rounded-2xl h-11" placeholder="Имя" />
+            <Label htmlFor="rname">{t("respond.yourName")}</Label>
+            <Input id="rname" value={name} onChange={(e) => setName(e.target.value)} className="rounded-2xl h-11" placeholder={t("respond.yourNamePh")} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="rmsg">Сообщение</Label>
+            <Label htmlFor="rmsg">{t("respond.message")}</Label>
             <Textarea id="rmsg" value={message} onChange={(e) => setMessage(e.target.value)} className="rounded-2xl min-h-28" />
           </div>
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose} className="rounded-full">Отмена</Button>
+          <Button variant="ghost" onClick={onClose} className="rounded-full">{t("common.cancel")}</Button>
           <Button onClick={submit} className="rounded-full gap-1 bouncy shadow-soft">
-            <Send className="h-4 w-4" /> Отправить
+            <Send className="h-4 w-4" /> {t("common.send")}
           </Button>
         </div>
       </DialogContent>
