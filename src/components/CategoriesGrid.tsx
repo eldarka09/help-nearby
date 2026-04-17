@@ -1,6 +1,7 @@
 import { CATEGORIES } from "@/lib/categories";
 import type { CategoryId } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   active: CategoryId | null;
@@ -8,11 +9,12 @@ interface Props {
 }
 
 export function CategoriesGrid({ active, onSelect }: Props) {
+  const { t } = useTranslation();
   return (
     <section id="categories" className="container py-16 scroll-mt-24">
       <div className="text-center mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold">Категории помощи</h2>
-        <p className="mt-3 text-muted-foreground">Выберите, чтобы отфильтровать запросы</p>
+        <h2 className="text-3xl md:text-4xl font-bold">{t("categoriesSection.title")}</h2>
+        <p className="mt-3 text-muted-foreground">{t("categoriesSection.subtitle")}</p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {CATEGORIES.map((c) => {
@@ -22,10 +24,10 @@ export function CategoriesGrid({ active, onSelect }: Props) {
               key={c.id}
               onClick={() => onSelect(isActive ? null : c.id)}
               className={cn(
-                "group rounded-3xl border p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-md",
+                "group rounded-3xl border p-5 text-left transition-all bouncy",
                 isActive
-                  ? "border-primary bg-primary/5 shadow-md"
-                  : "border-border bg-card"
+                  ? "border-primary bg-primary/5 shadow-soft"
+                  : "border-border bg-card hover:shadow-soft"
               )}
             >
               <div
@@ -37,7 +39,7 @@ export function CategoriesGrid({ active, onSelect }: Props) {
               >
                 <c.icon className="h-6 w-6" />
               </div>
-              <div className="font-semibold">{c.label}</div>
+              <div className="font-semibold">{t(c.labelKey)}</div>
             </button>
           );
         })}

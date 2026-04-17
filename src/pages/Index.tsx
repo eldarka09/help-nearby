@@ -14,6 +14,7 @@ import { FloatingHearts } from "@/components/FloatingHearts";
 import type { CategoryId, Post, PostType } from "@/lib/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const [createOpen, setCreateOpen] = useState(false);
@@ -22,10 +23,11 @@ const Index = () => {
   const [respondTo, setRespondTo] = useState<Post | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
+  const { t } = useTranslation();
 
   const requireAuth = (after: () => void) => {
     if (!user) {
-      toast("Войдите, чтобы продолжить ✨");
+      toast(t("common.needAuth"));
       setAuthOpen(true);
       return;
     }

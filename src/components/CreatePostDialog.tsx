@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { heartBurst } from "@/lib/confetti";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   open: boolean;
@@ -22,6 +23,7 @@ interface Props {
 
 export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaultCity }: Props) {
   const addPost = usePostsStore((s) => s.addPost);
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
@@ -58,7 +60,7 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
       category,
       description: description.trim(),
     });
-    toast.success(isRequest ? "Запрос опубликован 💕" : "Спасибо за помощь! 🌿");
+    toast.success(isRequest ? t("create.successRequest") : t("create.successOffer"));
     heartBurst(e.clientX, e.clientY, 28);
     onOpenChange(false);
   };
@@ -68,10 +70,10 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
       <DialogContent className="sm:max-w-lg rounded-3xl">
         <DialogHeader>
           <DialogTitle className="text-2xl">
-            {isRequest ? "Попросить помощь" : "Предложить помощь"}
+            {isRequest ? t("create.titleRequest") : t("create.titleOffer")}
           </DialogTitle>
           <DialogDescription>
-            Шаг {step + 1} из {total}
+            {t("create.step", { current: step + 1, total })}
           </DialogDescription>
         </DialogHeader>
 
@@ -90,17 +92,17 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
         {step === 0 && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Ваше имя</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Например, Анна" className="rounded-xl h-11" />
+              <Label htmlFor="name">{t("create.name")}</Label>
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t("create.namePh")} className="rounded-xl h-11" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="city">Город</Label>
-                <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Москва" className="rounded-xl h-11" />
+                <Label htmlFor="city">{t("create.city")}</Label>
+                <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder={t("create.cityPh")} className="rounded-xl h-11" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="district">Район</Label>
-                <Input id="district" value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="Арбат" className="rounded-xl h-11" />
+                <Label htmlFor="district">{t("create.district")}</Label>
+                <Input id="district" value={district} onChange={(e) => setDistrict(e.target.value)} placeholder={t("create.districtPh")} className="rounded-xl h-11" />
               </div>
             </div>
           </div>
@@ -122,7 +124,7 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
                   <div className={cn("h-10 w-10 rounded-xl grid place-items-center mb-2", c.colorClass, c.textClass)}>
                     <c.icon className="h-5 w-5" />
                   </div>
-                  <div className="text-sm font-medium">{c.label}</div>
+                  <div className="text-sm font-medium">{t(c.labelKey)}</div>
                 </button>
               );
             })}
@@ -131,15 +133,15 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
 
         {step === 2 && (
           <div className="space-y-2">
-            <Label htmlFor="desc">Опишите подробнее</Label>
+            <Label htmlFor="desc">{t("create.descLabel")}</Label>
             <Textarea
               id="desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={isRequest ? "Какая помощь нужна?" : "Чем вы можете помочь?"}
+              placeholder={isRequest ? t("create.descPhRequest") : t("create.descPhOffer")}
               className="rounded-2xl min-h-32"
             />
-            <p className="text-xs text-muted-foreground">Минимум 10 символов</p>
+            <p className="text-xs text-muted-foreground">{t("create.minChars")}</p>
           </div>
         )}
 
@@ -150,7 +152,7 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
             disabled={step === 0}
             className="rounded-full"
           >
-            <ArrowLeft className="h-4 w-4 mr-1" /> Назад
+            <ArrowLeft className="h-4 w-4 mr-1" /> {t("common.back")}
           </Button>
           {step < total - 1 ? (
             <Button
@@ -158,20 +160,20 @@ export function CreatePostDialog({ open, onOpenChange, type, defaultName, defaul
               disabled={!canNext}
               className="rounded-full"
             >
-              Далее <ArrowRight className="h-4 w-4 ml-1" />
+              {t("common.next")} <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           ) : (
             <Button
               onClick={submit}
               disabled={!canNext}
               className={cn(
-                "rounded-full",
+                "rounded-full bouncy",
                 isRequest
                   ? "bg-request text-request-foreground hover:bg-request/90"
                   : "bg-offer text-offer-foreground hover:bg-offer/90"
               )}
             >
-              <Check className="h-4 w-4 mr-1" /> Опубликовать
+              <Check className="h-4 w-4 mr-1" /> {t("common.publish")}
             </Button>
           )}
         </div>

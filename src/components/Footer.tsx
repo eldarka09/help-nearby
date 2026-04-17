@@ -3,8 +3,11 @@ import { usePostsStore } from "@/store/usePostsStore";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   const exportData = () => {
     const { posts, responses } = usePostsStore.getState();
     const blob = new Blob(
@@ -17,13 +20,13 @@ export function Footer() {
     a.download = `pomosh-ryadom-export-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("JSON экспорт скачан 💕");
+    toast.success(t("footer.exported"));
   };
 
   const links = [
-    { icon: Info, label: "О проекте" },
-    { icon: Shield, label: "Конфиденциальность" },
-    { icon: Mail, label: "Связаться с нами" },
+    { icon: Info, label: t("footer.about") },
+    { icon: Shield, label: t("footer.privacy") },
+    { icon: Mail, label: t("footer.contact") },
   ];
 
   return (
@@ -34,14 +37,14 @@ export function Footer() {
             <span className="grid h-9 w-9 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-soft">
               <Heart className="h-5 w-5" fill="currentColor" />
             </span>
-            ПомощьРядом
+            {t("common.appName")}
           </div>
           <p className="mt-3 text-sm text-muted-foreground max-w-xs">
-            Соседская взаимопомощь с теплом в сердце. Помогайте и получайте помощь рядом с вами.
+            {t("footer.tagline")}
           </p>
         </div>
         <div>
-          <h4 className="font-semibold mb-3">Навигация</h4>
+          <h4 className="font-semibold mb-3">{t("footer.navTitle")}</h4>
           <ul className="space-y-2">
             {links.map((l) => (
               <li key={l.label}>
@@ -49,7 +52,7 @@ export function Footer() {
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    toast(`${l.label} — скоро`);
+                    toast(t("footer.soon", { label: l.label }));
                   }}
                   className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
@@ -61,7 +64,7 @@ export function Footer() {
           </ul>
         </div>
         <div>
-          <h4 className="font-semibold mb-3">Разработчикам</h4>
+          <h4 className="font-semibold mb-3">{t("footer.devTitle")}</h4>
           <div className="flex flex-col gap-2">
             <Button
               variant="outline"
@@ -70,13 +73,13 @@ export function Footer() {
               onClick={exportData}
             >
               <Download className="h-4 w-4" />
-              Быстрый экспорт JSON
+              {t("footer.quickExport")}
             </Button>
             <Link
               to="/admin/data"
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
-              → Админ-панель данных
+              {t("footer.adminLink")}
             </Link>
           </div>
         </div>
@@ -84,9 +87,9 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
-            Сделано с <Heart className="h-3 w-3 text-primary" fill="currentColor" /> для добрых соседей
+            {t("footer.madeWith")} <Heart className="h-3 w-3 text-primary" fill="currentColor" /> {t("footer.forNeighbors")}
           </span>
-          <span>© {new Date().getFullYear()} ПомощьРядом</span>
+          <span>© {new Date().getFullYear()} {t("common.appName")}</span>
         </div>
       </div>
     </footer>

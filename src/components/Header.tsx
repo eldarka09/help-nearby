@@ -1,4 +1,4 @@
-import { Heart, Menu, Globe, LogIn, X, LogOut, User } from "lucide-react";
+import { Heart, Menu, LogIn, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -11,23 +11,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface Props {
   onNavigate: (id: string) => void;
   onLoginClick: () => void;
 }
 
-const links = [
-  { id: "feed", label: "Запросы" },
-  { id: "categories", label: "Категории" },
-  { id: "how", label: "Как это работает" },
-  { id: "dashboard", label: "Мои запросы" },
-];
-
 export function Header({ onNavigate, onLoginClick }: Props) {
   const [open, setOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
+  const { t } = useTranslation();
+
+  const links = [
+    { id: "feed", label: t("nav.feed") },
+    { id: "categories", label: t("nav.categories") },
+    { id: "how", label: t("nav.how") },
+    { id: "dashboard", label: t("nav.dashboard") },
+  ];
 
   const go = (id: string) => {
     setOpen(false);
@@ -48,7 +51,7 @@ export function Header({ onNavigate, onLoginClick }: Props) {
           <span className="grid h-9 w-9 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-soft">
             <Heart className="h-5 w-5" fill="currentColor" />
           </span>
-          ПомощьРядом
+          {t("common.appName")}
         </button>
 
         <nav className="hidden md:flex items-center gap-6">
@@ -64,9 +67,9 @@ export function Header({ onNavigate, onLoginClick }: Props) {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex gap-1 rounded-full">
-            <Globe className="h-4 w-4" /> RU
-          </Button>
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
+          </div>
 
           {user ? (
             <DropdownMenu>
@@ -82,17 +85,17 @@ export function Header({ onNavigate, onLoginClick }: Props) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => go("dashboard")} className="rounded-xl">
-                  Мои запросы
+                  {t("nav.myRequests")}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
                     signOut();
-                    toast("До скорой встречи! 👋");
+                    toast(t("auth.byeToast"));
                   }}
                   className="rounded-xl text-destructive focus:text-destructive"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
-                  Выйти
+                  {t("common.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -102,7 +105,7 @@ export function Header({ onNavigate, onLoginClick }: Props) {
               size="sm"
               className="hidden sm:inline-flex gap-1 rounded-full bouncy shadow-soft"
             >
-              <LogIn className="h-4 w-4" /> Войти
+              <LogIn className="h-4 w-4" /> {t("common.login")}
             </Button>
           )}
 
@@ -111,7 +114,7 @@ export function Header({ onNavigate, onLoginClick }: Props) {
             size="icon"
             className="md:hidden rounded-full"
             onClick={() => setOpen((o) => !o)}
-            aria-label="Меню"
+            aria-label={t("common.menu")}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
@@ -130,17 +133,20 @@ export function Header({ onNavigate, onLoginClick }: Props) {
                 {l.label}
               </button>
             ))}
-            {!user && (
-              <Button
-                onClick={() => {
-                  setOpen(false);
-                  onLoginClick();
-                }}
-                className="mt-2 rounded-full bouncy gap-1"
-              >
-                <LogIn className="h-4 w-4" /> Войти
-              </Button>
-            )}
+            <div className="flex items-center gap-2 pt-2">
+              <LanguageSwitcher />
+              {!user && (
+                <Button
+                  onClick={() => {
+                    setOpen(false);
+                    onLoginClick();
+                  }}
+                  className="flex-1 rounded-full bouncy gap-1"
+                >
+                  <LogIn className="h-4 w-4" /> {t("common.login")}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
